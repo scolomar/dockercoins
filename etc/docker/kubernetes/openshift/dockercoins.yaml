@@ -22,6 +22,10 @@ spec:
         ports:
           -
             containerPort: 8080
+        resources:
+          limits:
+            cpu: 2m
+            memory: 20M            
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -43,36 +47,10 @@ spec:
         ports:
           -
             containerPort: 8080
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: redis-deploy
-spec:
-  selector:
-    matchLabels:
-      label-redis: redis-po
-  template:
-    metadata:
-      labels:
-        label-redis: redis-po
-    spec:
-      containers:
-      -
-        image: redis
-        name: redis-container
-        ports:
-        -
-          containerPort: 6379
-        volumeMounts:
-        -
-          mountPath: /data
-          name: redis-vol
-      volumes:
-        - 
-          name: redis-vol
-          persistentVolumeClaim:
-            claimName: redis-pvc
+        resources:
+          limits:
+            cpu: 2m
+            memory: 30M
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -112,6 +90,10 @@ spec:
       -
         image: secobau/dockercoins:worker-2.0
         name: worker-container
+        resources:
+          limits:
+            cpu: 20m
+            memory: 30M
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -269,4 +251,47 @@ spec:
     port: 8080
   selector:
     label-webui: webui-po
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-sts
+spec:
+  selector:
+    matchLabels:
+      label-redis: redis-po
+  serviceName: redis
+  template:
+    metadata:
+      labels:
+        label-redis: redis-po
+    spec:
+      containers:
+      -
+        image: redis
+        name: redis-container
+        ports:
+        -
+          containerPort: 6379
+        resources:
+          limits:
+            cpu: 6m
+            memory: 20Mi
+        volumeMounts:
+        -
+          mountPath: /data
+          name: redis-vol
+  volumeClaimTemplates:
+  - 
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: redis-vol
+    spec:
+      accessModes:
+      -
+        ReadWriteOnce
+      resources:
+        requests:
+          storage: 1G
 ################################################################################
