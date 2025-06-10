@@ -22,6 +22,11 @@ spec:
         ports:
           -
             containerPort: 8080
+        readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
         resources:
           limits:
             cpu: 2m
@@ -47,6 +52,11 @@ spec:
         ports:
           -
             containerPort: 8080
+        readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
         resources:
           limits:
             cpu: 4m
@@ -72,6 +82,11 @@ spec:
         ports:
           -
             containerPort: 8080
+        readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
         resources:
           limits:
             cpu: 1m
