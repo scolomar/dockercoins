@@ -265,6 +265,12 @@ spec:
         ports:
         -
           containerPort: 6379
+        readinessProbe:
+            exec:
+              command:
+                - sh
+                - '-c'
+                - redis-cli PING | grep PONG
         resources:
           limits:
             cpu: 5m
